@@ -1,9 +1,6 @@
 version: "2"
 services:
-  mongo:
-    image: mongo
-    ports :
-      - "27017:27017"
+
   rabbitmq:
     image: 'rabbitmq:3.6-management-alpine'
     ports:
@@ -13,3 +10,24 @@ services:
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
       RABBITMQ_DEFAULT_USER: "user"
       RABBITMQ_DEFAULT_PASS: "password"
+
+  redis:
+    image: "redis:alpine"
+
+    command: redis-server --requirepass pass
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
+        - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+    networks:
+      node_net:
+        ipv4_address: localhost
+
+
